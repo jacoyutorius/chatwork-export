@@ -17,7 +17,12 @@ module ChatworkExport
 
 			rooms =  @client.room_list.map{|r| Hashie::Mash.new({room_id: r[0], room_name:r[1]}) }
 			rooms.each do |room|
-				@client.export_csv(room.room_id, "#{@log_dir}/#{room.room_name}.csv")
+				file_dir = "#{@log_dir}/#{room.room_name}_files"
+				unless File.exists?(file_dir)
+			    FileUtils.mkdir_p file_dir
+			  end
+
+				@client.export_csv(room.room_id, "#{@log_dir}/#{room.room_name}.csv", { include_file: true, dir: file_dir })
 			end
 		end
 	end
